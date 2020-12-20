@@ -40,6 +40,21 @@ var comn = require('../common');
         }
       },
       {
+        name: 'canSub',
+        code: function canSub (listener) {
+          if ( typeof listener == 'function' ) {
+            return true;
+          }
+          return !! this.canSubAs(this.name, listener);
+        }
+      },
+      {
+        name: 'canSubAs',
+        code: function canSub (asName, listener) {
+          return !! listener['on' + comn.String.capitalize(asName)];
+        }
+      },
+      {
         name: 'subAs',
         code: function subAs (asName, listener) {
           if ( typeof listener == 'function' ) {
@@ -49,6 +64,24 @@ var comn = require('../common');
           this.listeners.push(listener[
             'on' + comn.String.capitalize(asName)
           ].bind(listener));
+        }
+      },
+      {
+        name: 'unsub',
+        code: function unsub (listener) {
+          let i = this.listeners.indexOf(listener);
+          if ( i == -1 ) return;
+          this.listeners.splice(i, 1);
+        }
+      },
+      {
+        name: 'subOnce',
+        code: function subOnce (listener) {
+          let f; f = (topic, ...args) => {
+            listener(topic, ...args);
+            this.unsub(f);
+          };
+          this.sub(f);
         }
       }
     ]

@@ -18,7 +18,7 @@
     if ( ! o.cls_.implementors_.hasOwnProperty(key) )
       throw new Error(
         `${o.cls_.id} does not implement ${key}`);
-    
+
     // Get model for the interface being provided
     var impl = M.__registry__[key];
     if ( ! impl ) throw new Error(`unknown model ${key}`);
@@ -48,7 +48,10 @@
         impl.properties.forEach(prop => {
           let bind;
           if ( bind = bindings[prop.key] ) {
-            agent[prop.key] = o[bind];
+            if ( typeof bind == 'function' )
+              agent[prop.key] = bind(o);
+            else
+              agent[prop.key] = o[bind];
           } else {
             prop.defineOn(agent);
           }
