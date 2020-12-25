@@ -47,4 +47,24 @@ var comn = require('../common');
     }
     return o;
   }
+  M.Serialize.applyVal = (o, val) => {
+    if ( typeof val != 'object' ) return val;
+    if ( Array.isArray(val) ) return val.map(v => M.Serialize.parseVal(v));
+    if ( val.cls_ && o.cls_ && o.cls_.id && val.cls_ == o.cls_.id )
+      return M.Serialize.apply(o, val);
+    if ( val.cls_ ) return M.Serialize.parse(val);
+    return val;
+  };
+  M.Serialize.apply = (o, json) => {
+    for ( k in json ) if ( k != 'cls_' && k != 'impl_' ) {
+      o[k] = M.Serialize.applyVal(o[k], json[k]);
+    }
+    if ( json['impl_'] ) for ( implCls in json.impl_ ) {
+      let impl = M.Class.provide(o, implCls);
+      for ( let pname in json.impl_[implCls] ) {
+        impl[pname] = M.Serialize.applyVal(impl[pname], json.impl_[implCls][pname]);
+      }
+    }
+    return o;
+  }
 })();

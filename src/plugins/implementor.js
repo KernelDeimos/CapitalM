@@ -67,6 +67,11 @@
           }
         });
 
+        let settings = implDef.settings || {};
+        for ( let settingKey in settings ) {
+          agent[settingKey] = settings[settingKey];
+        }
+
         // Store this "ghost object" in plugin data
         o.pluginData_[plugin.id].agents[impl.id] = agent;
         return o;
