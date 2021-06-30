@@ -176,12 +176,13 @@ M.CLASS = M.Flow.syncChain([
       m.create = M.Flow.syncChain([
         {
           name: 'M.CLASS.create.init',
-          code: args => {
+          code: (...args) => {
             var o = {};
             o.cls_ = m;
             o.instance_ = {};
             o.info_ = {
-              initArgs: args
+              initArgs: args.length > 0 ? args[0] : undefined,
+              createArgs: args,
             };
             return o;
           }
